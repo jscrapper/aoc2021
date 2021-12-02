@@ -22,5 +22,5 @@ class Day(object):
         raise NotImplementedError
 
     def run(self):
-        self.a()
-        self.b()
+        print(f"A: {self.a()}")
+        print(f"B: {self.b()}")
