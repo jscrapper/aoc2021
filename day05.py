@@ -6,12 +6,16 @@ class Day05(Day):
 
     def parse_input(self):
         result = []
+        max_x=0
+        max_y=0
         for line in self.raw_puzzle_input:
             a,b = line.split(" -> ")
             x1,y1 = map(int,a.split(","))
             x2,y2 = map(int,b.split(","))
+            max_x = max(max_x, x1, x2)
+            max_y = max(max_y, y1, y2)
             result.append(((x1,y1), (x2,y2)))
-        self.grid = np.zeros((999,999), dtype=np.int8)
+        self.grid = np.zeros((max_y+1,max_x+1), dtype=np.int8)
         return result
 
     def a(self):
@@ -38,14 +42,24 @@ class Day05(Day):
                     for ix in range(sorted_x[0], sorted_x[1]+1):
                         self.grid[iy,ix]+=1
 
-            diag = vent[0][0]-vent[1][0] == vent[0][1] - vent[1][1]
+            diag = abs(vent[0][0]-vent[1][0]) == abs(vent[0][1] - vent[1][1])
             if diag:
                 flipy = vent[0][1] > vent[1][1]
-                flipx = vent[0][0] > vent[1][0]
-                step = -1 if flipy else 1
-                for i,j in enumerate(range(vent[0][1], vent[1][1] + step)):
-                    x=vent[0][0]-i if flipx else vent[0][0]+i
-                    self.grid[j, x] += 1
+                x1=vent[0][0]
+                x2=vent[1][0]
+                y1=vent[0][1]
+                y2=vent[1][1]
+                if flipy:
+                    x1=vent[1][0]
+                    x2=vent[0][0]
+                    y1=vent[1][1]
+                    y2=vent[0][1]
+                
+                flipx = x1 > x2
+                
+                for i,y in enumerate(range(y1,y2+1)):
+                    x=x1-i if flipx else x1+i
+                    self.grid[y][x] += 1
 
         count = np.count_nonzero(self.grid > 1)
         return count
@@ -65,4 +79,4 @@ class Day05(Day):
         self.b()
 
 if __name__ == "__main__":
-    Day05().test()
+    Day05().b()
