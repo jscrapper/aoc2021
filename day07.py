@@ -16,12 +16,19 @@ class Day07(Day):
             min_fuel = min(np.sum([abs(pos - i) for pos in positions]), min_fuel)
         return min_fuel
 
+    def lookup(self, pos):
+        if not hasattr(self, 'cache'):
+            self.cache = {}
+        if pos not in self.cache:
+            self.cache[pos] = sum(accumulate(np.ones(abs(pos), dtype=np.uint32)))
+        return self.cache[pos]
+
     def b(self):
         positions = np.array(self.puzzle_input, dtype=np.uint32)
         min_fuel = 9999999999999999
         for i in range(positions.min(), positions.max()):
-            min_fuel = min(sum([sum(accumulate(np.ones(abs(pos - i), dtype=np.uint32))) for pos in positions]), min_fuel)
+            min_fuel = min(sum([ self.lookup(pos - i) for pos in positions]), min_fuel)
         return min_fuel
 
 if __name__ == "__main__": 
-    Day07().run()
+    Day07(profile=True).run()
