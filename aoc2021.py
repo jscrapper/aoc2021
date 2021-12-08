@@ -39,7 +39,7 @@ class Day(object):
         with timer() as t:
             b_result = self.b()
         
-        msg = f"A: {b_result}"
+        msg = f"B: {b_result}"
         if self.profile:
             msg += f" Completed in {t.time:.4f}s."
         print(msg)
