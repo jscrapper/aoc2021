@@ -1,5 +1,6 @@
 from aoc2021 import Day, Graph
 import numpy as np
+from copy import deepcopy
 
 class Day15(Day):
     def get_test_input(self):
@@ -34,7 +35,27 @@ class Day15(Day):
         return s
 
     def b(self):
-        pass
+        num_tiles = 5
+        base_y, base_x=self.puzzle_input.shape
+        graph = np.tile(self.puzzle_input.grid, (num_tiles, num_tiles))        
+        for y in range(num_tiles):
+            for x in range(num_tiles):
+                graph[y*base_y:y*base_y+base_y, x*base_x:x*base_x+base_x]+=x+y
+        # wrap to 1
+        for idx, val in np.ndenumerate(graph):
+            if val > 9:
+                graph[idx]-=9
+        self.puzzle_input.grid = graph
+        goal = tuple([x-1 for x in self.puzzle_input.shape])
+        p=self.puzzle_input.get_path_dijkstra((0,0), goal)
+        cost = [self.puzzle_input.grid[x] for x in p]
+        s = sum(cost)
+
+        ma = np.ma.array(self.puzzle_input.grid, dtype=np.uint8)
+        for loc in p:
+            ma[loc]=np.ma.masked
+
+        return s
 
 if __name__ == "__main__":
-    Day15(False).run()
+    Day15(False, True).run()
