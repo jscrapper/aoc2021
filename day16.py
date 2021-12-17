@@ -1,6 +1,6 @@
 from aoc2021 import Day
 from io import StringIO
-import numpy as np
+from functools import reduce
 class Packet():
     def __init__(self, stream:StringIO):
         self.stream = stream
@@ -11,11 +11,10 @@ class Packet():
         self.subpackets = []
         if self.typeid == 4:
             binstring = ""
-            while True:
-                end = stream.read(1) == "0"
+            header = ''
+            while header != '0':
+                header = stream.read(1)
                 binstring += stream.read(4)
-                if end: 
-                    break
             self.value = int(binstring,2)
         else:
             self.length_typeid = stream.read(1)
@@ -33,11 +32,11 @@ class Packet():
         if self.typeid == 0: # sum
             self.value = sum([p.value for p in self.subpackets])
         elif self.typeid == 1: # product
-            self.value = np.product([p.value for p in self.subpackets])
+            self.value = reduce(lambda x,y: x*y, [p.value for p in self.subpackets], 1)
         elif self.typeid == 2: # min
-            self.value = np.min([p.value for p in self.subpackets])
+            self.value = min([p.value for p in self.subpackets])
         elif self.typeid == 3: # max
-            self.value = np.max([p.value for p in self.subpackets])
+            self.value = max([p.value for p in self.subpackets])
         elif self.typeid == 5: # gt
             self.value =  int(self.subpackets[0].value > self.subpackets[1].value)
         elif self.typeid == 6: # lt
