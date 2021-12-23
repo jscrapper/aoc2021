@@ -29,7 +29,7 @@ class Day(object):
     def b(self):
         raise NotImplementedError
 
-    def run(self):
+    def run(self, force_reparse=False):
         with timer() as t:
             a_result = self.a()
         
@@ -37,6 +37,9 @@ class Day(object):
         if self.profile:
             msg += f" Completed in {t.time:.4f}s."
         print(msg)
+
+        if force_reparse:
+            self.puzzle_input = self.parse_input()
 
         with timer() as t:
             b_result = self.b()
